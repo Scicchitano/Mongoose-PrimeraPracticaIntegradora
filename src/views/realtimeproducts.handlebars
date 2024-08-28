@@ -1,0 +1,47 @@
+<h1>Socket.io with Handlebars</h1>
+<button onclick="sendGetRequest()">Agregar producto</button>
+<form id="deleteForm">
+    <label for="productId">ID del Producto a eliminar:</label>
+    <input type="text" id="productId" name="productId" required>
+    <button type="button" onclick="sendDeleteRequest()">Eliminar Producto</button>
+  </form>
+
+{{!-- <button onclick="enviarMensaje()">all products</button> --}}
+
+<h2>Datos del archivo JSON:</h2>
+<pre id="jsonData"></pre>
+
+
+<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+<script>
+    
+    
+    
+    const socket = io.connect('http://localhost:8080');
+
+    socket.on('connect', () => {
+        console.log('Conectado al servidor');
+    });
+
+    socket.on('messageLogs', mensajes => {
+        console.log('Mensajes recibidos:', mensajes);
+    });
+    socket.on('message', data => {
+        console.log('Mensajes recibidos:', data);
+        document.getElementById('jsonData').textContent = data;
+    })
+    // Realiza una solicitud al servidor para obtener los datos JSON de forma asíncrona
+    // Realiza una solicitud al servidor para obtener los datos JSON de forma asíncrona
+    async function sendGetRequest() {
+      const response = await fetch('http://localhost:8080/api/products', { method: 'POST' });
+      const data = await response.text();
+      console.log(data);
+    }
+
+    async function sendDeleteRequest() {
+      const productId = document.getElementById('productId').value;
+      const response = await fetch(`http://localhost:8080/api/products/${productId}`, { method: 'DELETE' });
+      const data = await response.text();
+      console.log(data);
+    }
+</script>
